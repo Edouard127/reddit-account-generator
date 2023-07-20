@@ -5,7 +5,6 @@ import (
 	"fmt"
 	api2captcha "github.com/2captcha/2captcha-go"
 	"github.com/go-rod/rod"
-	"github.com/go-rod/rod/lib/proto"
 	"github.com/joho/godotenv"
 	"os"
 	"strings"
@@ -36,11 +35,7 @@ func main() {
 
 		browser.SlowMotion(time.Millisecond * 10)
 
-		page, err := browser.Page(proto.TargetCreateTarget{URL: "https://old.reddit.com/login"})
-		if err != nil {
-			fmt.Println("This proxy could not be used, skipping.")
-			return
-		}
+		page := browser.MustPage("https://old.reddit.com/login")
 
 		fmt.Println("Page opened")
 
