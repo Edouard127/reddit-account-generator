@@ -47,15 +47,19 @@ func main() {
 		page.MustElement("#email_reg").MustInput(user.Email)
 		fmt.Println("User data entered")
 
-		fmt.Println("Solving captcha...")
-		response, err := client.Solve(captcha.ToRequest())
-		if err != nil {
-			panic(err)
+		page.MustElement("#register-form > div.spacer > div > div > div > iframe").MustFrame()
+		if has, _, _ := page.Has("#register-form > div.spacer > div > div > div > iframe"); has {
+			fmt.Println("Found captcha, solving...")
+			response, err := client.Solve(captcha.ToRequest())
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Println("Captcha solved")
+			page.Eval(fmt.Sprintf(`document.getElementById("g-recaptcha-response").innerHTML = "%s";`, response))
 		}
 
-		fmt.Println("Captcha solved")
-		page.Eval(fmt.Sprintf(`document.getElementById("g-recaptcha-response").innerHTML = "%s";`, response))
-		page.Eval(`document.getElementById("register-form").submit();`)
+		page.MustElement("#register-form > div.c-clearfix.c-submit-group > button").MustClick()
 		fmt.Println("Register button clicked")
 
 		fmt.Println("Waiting for page load...")
@@ -75,14 +79,14 @@ func main() {
 			return mail.Subject == "Verify your Reddit email address"
 		})
 		fmt.Println("Email received")
-
 		i := strings.Index(verification.Body, `https://www.reddit.com/verification/`)
 		link := verification.HtmlBody[i : i+strings.Index(verification.HtmlBody[i:], `"`)]
 		fmt.Println(link)
 
-		fmt.Println("Verifying email...")
 		browser.MustPage(link)
-		page.Eval(`document.getElementsByClassName("verify-button")[0].click()`)
+
+		fmt.Println("Verifying email...")
+		page.MustElement("#register-form > div.c-clearfix.c-submit-group > button").MustClick()
 		fmt.Println("Email verified")
 
 		browser.MustClose()
