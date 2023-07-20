@@ -84,9 +84,10 @@ func main() {
 		fmt.Println(link)
 
 		browser.MustPage(link)
+		page.WaitLoad()
 
 		fmt.Println("Verifying email...")
-		page.MustElement("#register-form > div.c-clearfix.c-submit-group > button").MustClick()
+		page.MustElement("#verify-email > button").MustClick()
 		fmt.Println("Email verified")
 
 		browser.MustClose()

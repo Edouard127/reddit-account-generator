@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-rod/rod"
+	"os"
 	"strings"
 	"testing"
 )
@@ -12,4 +14,17 @@ func TestParseLink(t *testing.T) {
 	end := strings.Index(body[index:], `\"`)
 	link := body[index : index+end]
 	fmt.Println(link)
+}
+
+func TestVerifyClick(t *testing.T) {
+	url := `https://www.reddit.com/verification/jogInQyX2Z2YWFsbTZvMCIsICJzaWciOiAiQVFBQTZFSzlaRFlIdTVOcDB3WHRTZFV6WTluZUF4TU9zSjRaWXB3cmJoSTYySzg1WXVrSyJ9?correlation_id=1999df97-fcff-456c-937e-80fcc7af9989&amp;ref=verify_e`
+
+	browser := rod.New().MustConnect()
+	page := browser.MustPage(url)
+	page.WaitLoad()
+
+	bytes, _ := page.Screenshot(true, nil)
+	os.WriteFile(fmt.Sprintf("screenshot%d.png", index), bytes, 0644)
+
+	fmt.Println(page.Has("#verify-email > button"))
 }
