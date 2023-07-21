@@ -36,8 +36,9 @@ func main() {
 
 	for {
 		page := browser.MustPage("https://old.reddit.com/login")
-
+		page.MustWaitStable()
 		fmt.Println("Page opened")
+
 		user := NewRandomUser()
 
 		page.MustElement("#user_reg").MustInput(user.Username)
@@ -92,6 +93,8 @@ func main() {
 		}
 		fmt.Println("Email verified")
 
+		browser.SetCookies(nil)
+		page.MustClose()
 		fmt.Println("Waiting 10 minutes...")
 		time.Sleep(time.Minute * 10)
 	}
