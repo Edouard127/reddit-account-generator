@@ -29,16 +29,15 @@ func main() {
 
 	client = api2captcha.NewClient(os.Getenv("API_KEY"))
 
+	fmt.Println("Starting...")
+	browser := rod.New().MustConnect()
+
+	browser.SlowMotion(time.Millisecond * 10)
+
 	for {
-		fmt.Println("Starting...")
-		browser := rod.New().MustConnect()
-
-		browser.SlowMotion(time.Millisecond * 10)
-
 		page := browser.MustPage("https://old.reddit.com/login")
 
 		fmt.Println("Page opened")
-
 		user := NewRandomUser()
 
 		page.MustElement("#user_reg").MustInput(user.Username)
@@ -80,19 +79,20 @@ func main() {
 		})
 		fmt.Println("Email received")
 		i := strings.Index(verification.Body, `https://www.reddit.com/verification/`)
-		link := verification.HtmlBody[i : i+strings.Index(verification.HtmlBody[i:], `"`)]
-		fmt.Println(link)
 
-		browser.MustPage(link)
-		page.WaitLoad()
+		page.MustNavigate(verification.HtmlBody[i : i+strings.Index(verification.HtmlBody[i:], `"`)])
+		page.MustWaitStable()
+
+		bytes, _ = page.Screenshot(true, nil)
+		os.WriteFile(fmt.Sprintf("screenshot%d.png", index), bytes, 0644)
 
 		fmt.Println("Verifying email...")
-		page.MustElement("#verify-email > button").MustClick()
+		if page.MustHas("#verify-email > button") {
+			page.MustElement("#verify-email > button").MustClick()
+		}
 		fmt.Println("Email verified")
 
-		browser.MustClose()
 		fmt.Println("Waiting 10 minutes...")
-
 		time.Sleep(time.Minute * 10)
 	}
 }
