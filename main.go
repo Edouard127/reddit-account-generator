@@ -99,7 +99,8 @@ func main() {
 func readUsers() []User {
 	file, err := os.Open("users.json")
 	if err != nil {
-		panic(err)
+		os.WriteFile("users.json", []byte("[]"), 0644)
+		return make([]User, 0)
 	}
 
 	defer file.Close()
