@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	api2captcha "github.com/2captcha/2captcha-go"
@@ -20,8 +21,6 @@ var (
 		Invisible: false,
 		Action:    "verify",
 	}
-
-	index int
 )
 
 func main() {
@@ -62,30 +61,23 @@ func main() {
 		page.MustElement("#register-form > div.c-clearfix.c-submit-group > button").MustClick()
 		fmt.Println("Register button clicked")
 
-		fmt.Println("Waiting for page load...")
-		page.WaitLoad()
-
-		bytes, _ := page.Screenshot(true, nil)
-		os.WriteFile(fmt.Sprintf("screenshot%d.png", index), bytes, 0644)
-		fmt.Println("Screenshot saved")
-
-		writeUsers(append(users, user))
-		fmt.Println("User saved")
-		index++
-
 		fmt.Println("Waiting for email...")
-		verification := ReadMessage(user.Email, func(mail *Mail) bool {
-			fmt.Println(mail)
+		verification := ReadMessage(context.Background(), time.Second*30, user.Email, func(mail *Mail) bool {
 			return mail.Subject == "Verify your Reddit email address"
 		})
+
+		if verification == nil {
+			fmt.Println("I could not find the verification email :(")
+			fmt.Println("I'll be waiting a minute ok ? :3")
+			time.Sleep(time.Minute)
+			continue
+		}
+
 		fmt.Println("Email received")
 		i := strings.Index(verification.Body, `https://www.reddit.com/verification/`)
 
 		page.MustNavigate(verification.HtmlBody[i : i+strings.Index(verification.HtmlBody[i:], `"`)])
 		page.MustWaitStable()
-
-		bytes, _ = page.Screenshot(true, nil)
-		os.WriteFile(fmt.Sprintf("screenshot%d.png", index), bytes, 0644)
 
 		fmt.Println("Verifying email...")
 		if page.MustHas("#verify-email > button") {
@@ -93,9 +85,13 @@ func main() {
 		}
 		fmt.Println("Email verified")
 
+		writeUsers(append(users, user))
+		fmt.Println("User saved")
+
+		fmt.Println("Done. Waiting 10 minutes ;3")
+
 		browser.SetCookies(nil)
 		page.MustClose()
-		fmt.Println("Waiting 10 minutes...")
 		time.Sleep(time.Minute * 10)
 	}
 }

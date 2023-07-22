@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -61,28 +62,30 @@ func GetMessages(email string) []*Mail {
 }
 
 // ReadMessage will read the first message that matches the given function
-// If no messages match the function, it will wait 2 seconds and try again
+// If no messages match the function, it will wait a second and try again
 // This mean that this function will block until a message is found
-func ReadMessage(email string, fn func(*Mail) bool) *MailBody {
-	var m *Mail
+func ReadMessage(ctx context.Context, t time.Duration, email string, fn func(*Mail) bool) *MailBody {
+	timeout, cancel := context.WithTimeout(ctx, t)
+	defer cancel()
 
-	for _, mail := range GetMessages(email) {
-		if fn(mail) {
-			m = mail
-			break
+	for {
+		select {
+		case <-timeout.Done():
+			return nil
+		default:
+			mails := GetMessages(email)
+			for _, mail := range mails {
+				fmt.Println(mail.Subject)
+				if fn(mail) {
+					req, _ := http.NewRequest("GET", fmt.Sprintf(READ_EMAIL, strings.Split(email, "@")[0], strings.Split(email, "@")[1], mail.Id), nil)
+					resp, _ := http.DefaultClient.Do(req)
+
+					var mailBody *MailBody
+					json.NewDecoder(resp.Body).Decode(&mailBody)
+					return mailBody
+				}
+			}
+			time.Sleep(time.Second)
 		}
 	}
-
-	if m == nil {
-		time.Sleep(time.Second)
-		return ReadMessage(email, fn)
-	}
-
-	req, _ := http.NewRequest("GET", fmt.Sprintf(READ_EMAIL, strings.Split(email, "@")[0], strings.Split(email, "@")[1], m.Id), nil)
-	resp, _ := http.DefaultClient.Do(req)
-
-	var mail *MailBody
-	json.NewDecoder(resp.Body).Decode(&mail)
-
-	return mail
 }

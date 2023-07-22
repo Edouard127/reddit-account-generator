@@ -1,5 +1,7 @@
 package main
 
+import "math/rand"
+
 type User struct {
 	Email    string `json:"email"`
 	Username string `json:"username"`
@@ -9,7 +11,7 @@ type User struct {
 func NewRandomUser() User {
 	return User{
 		Email:    GetEmail(),
-		Username: generateId(18),
-		Password: generateId(18),
+		Username: fillWithNumbers(generateId(rand.Intn(12) + 5)),
+		Password: fillWithNumbers(generateId(rand.Intn(34))),
 	}
 }
