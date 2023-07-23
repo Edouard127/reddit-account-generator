@@ -11,7 +11,7 @@ type User struct {
 func NewRandomUser() User {
 	return User{
 		Email:    GetEmail(),
-		Username: fillWithNumbers(generateId(rand.Intn(12) + 5)),
+		Username: fillWithNumbers(generateId(rand.Intn(12))),
 		Password: fillWithNumbers(generateId(rand.Intn(34))),
 	}
 }

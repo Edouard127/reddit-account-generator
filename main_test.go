@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/go-rod/rod"
-	"os"
 	"strings"
 	"testing"
 )
@@ -22,9 +21,6 @@ func TestVerifyClick(t *testing.T) {
 	browser := rod.New().MustConnect()
 	page := browser.MustPage(url)
 	page.WaitLoad()
-
-	bytes, _ := page.Screenshot(true, nil)
-	os.WriteFile(fmt.Sprintf("screenshot%d.png", index), bytes, 0644)
 
 	fmt.Println(page.Has("#verify-email > button"))
 }

@@ -6,7 +6,11 @@ import (
 	"fmt"
 	api2captcha "github.com/2captcha/2captcha-go"
 	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/launcher"
 	"github.com/joho/godotenv"
+	"golang.org/x/net/proxy"
+	"net"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -21,6 +25,15 @@ var (
 		Invisible: false,
 		Action:    "verify",
 	}
+
+	dialer, _  = proxy.SOCKS5("tcp", "127.0.0.1:9050", nil, proxy.Direct)
+	HTTPClient = &http.Client{
+		Transport: &http.Transport{
+			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+				return dialer.Dial(network, addr)
+			},
+		},
+	}
 )
 
 func main() {
@@ -29,7 +42,8 @@ func main() {
 	client = api2captcha.NewClient(os.Getenv("API_KEY"))
 
 	fmt.Println("Starting...")
-	browser := rod.New().MustConnect()
+	url := launcher.New().Set("proxy-server", "socks5://127.0.0.1:9050").MustLaunch()
+	browser := rod.New().ControlURL(url).MustConnect()
 
 	browser.SlowMotion(time.Millisecond * 10)
 
@@ -59,6 +73,8 @@ func main() {
 		}
 
 		page.MustElement("#register-form > div.c-clearfix.c-submit-group > button").MustClick()
+		page.MustWaitStable()
+
 		fmt.Println("Register button clicked")
 
 		fmt.Println("Waiting for email...")
@@ -88,11 +104,12 @@ func main() {
 		writeUsers(append(users, user))
 		fmt.Println("User saved")
 
-		fmt.Println("Done. Waiting 10 minutes ;3")
+		fmt.Println("Done. Waiting for a new tor circuit ;3")
+		waitForNewIP(context.Background(), time.Minute*10, time.Second*10, HTTPClient)
+		fmt.Println("Omagad, new IP! :D")
 
 		browser.SetCookies(nil)
 		page.MustClose()
-		time.Sleep(time.Minute * 10)
 	}
 }
 
