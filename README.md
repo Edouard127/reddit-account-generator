@@ -9,7 +9,7 @@ It uses [2captcha](https://2captcha.com?from=10885501) to solve captchas.
 - A connection to the internet
 
 ### How to speed up the account creation time ?
-You can create a file named `torrc` on Windows at %APPDATA%\tor\torrc and add the following lines:
+You can create a file named `torrc` on Windows at %APPDATA%\tor\ and add the following lines:
 ```
 CircuitBuildTimeout 30
 LearnCircuitBuildTimeout 0 
