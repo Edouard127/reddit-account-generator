@@ -42,12 +42,13 @@ func main() {
 	client = api2captcha.NewClient(os.Getenv("API_KEY"))
 
 	fmt.Println("Starting...")
-	url := launcher.New().Set("proxy-server", "socks5://127.0.0.1:9050").MustLaunch()
-	browser := rod.New().ControlURL(url).MustConnect()
-
-	browser.SlowMotion(time.Millisecond * 10)
 
 	for {
+		url := launcher.New().Set("proxy-server", "socks5://127.0.0.1:9050").MustLaunch()
+		browser := rod.New().ControlURL(url).MustConnect()
+
+		browser.SlowMotion(time.Millisecond * 10)
+
 		page := browser.MustPage("https://old.reddit.com/login")
 		page.MustWaitStable()
 		fmt.Println("Page opened")
@@ -74,6 +75,8 @@ func main() {
 
 		page.MustElement("#register-form > div.c-clearfix.c-submit-group > button").MustClick()
 		page.MustWaitStable()
+
+		page.MustScreenshot("screenshot.png")
 
 		fmt.Println("Register button clicked")
 
@@ -105,11 +108,11 @@ func main() {
 		fmt.Println("User saved")
 
 		fmt.Println("Done. Waiting for a new tor circuit ;3")
-		HTTPClient = waitForNewIP(context.Background(), time.Minute*10, time.Second*10, HTTPClient)
+		waitForNewIP(context.Background(), time.Minute*10, time.Second*10, HTTPClient)
 		fmt.Println("Omagad, new IP! :D")
 
 		browser.SetCookies(nil)
-		page.MustClose()
+		browser.MustClose()
 	}
 }
 
