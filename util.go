@@ -24,7 +24,7 @@ func fillWithNumbers(str string) string {
 	return str
 }
 
-func waitForNewIP(ctx context.Context, t time.Duration, interval time.Duration, current *http.Client) {
+func waitForNewIP(ctx context.Context, t time.Duration, interval time.Duration, current *http.Client) *http.Client {
 	timeout, cancel := context.WithTimeout(ctx, t)
 	defer cancel()
 
@@ -40,7 +40,7 @@ func waitForNewIP(ctx context.Context, t time.Duration, interval time.Duration, 
 	for {
 		select {
 		case <-timeout.Done():
-			return
+			return current
 		default:
 			newClient := &http.Client{
 				Transport: &http.Transport{
@@ -60,7 +60,7 @@ func waitForNewIP(ctx context.Context, t time.Duration, interval time.Duration, 
 			json.NewDecoder(resp.Body).Decode(&newIp)
 
 			if newIp.Ip != ip.Ip {
-				return
+				return newClient
 			}
 			time.Sleep(interval)
 		}
