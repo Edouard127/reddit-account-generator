@@ -76,8 +76,6 @@ func main() {
 		page.MustElement("#register-form > div.c-clearfix.c-submit-group > button").MustClick()
 		page.MustWaitStable()
 
-		page.MustScreenshot("screenshot.png")
-
 		fmt.Println("Register button clicked")
 
 		fmt.Println("Waiting for email...")
