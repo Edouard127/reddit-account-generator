@@ -108,7 +108,7 @@ func main() {
 		fmt.Println("User saved")
 
 		fmt.Println("Done. Waiting for a new tor circuit ;3")
-		waitForNewIP(context.Background(), time.Minute*10, time.Second*10, HTTPClient)
+		HTTPClient = waitForNewIP(context.Background(), time.Minute*10, time.Second*10, HTTPClient)
 		fmt.Println("Omagad, new IP! :D")
 
 		browser.SetCookies(nil)
