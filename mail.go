@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -36,8 +37,19 @@ type MailBody struct {
 	HtmlBody    string       `json:"htmlBody"`
 }
 
+var Domains = []string{
+	"1secmail.com",
+	"1secmail.net",
+	"1secmail.org",
+	"kzcvv.com",
+	"qiott.com",
+	"wuuvo.com",
+	"icznn.com",
+	"ezztt.com",
+}
+
 func GetEmail() string {
-	return generateId(18) + "@1secmail.com"
+	return generateId(18) + "@" + Domains[rand.Intn(len(Domains))]
 }
 
 func GetMessages(email string) []*Mail {

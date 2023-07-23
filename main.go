@@ -79,7 +79,7 @@ func main() {
 		fmt.Println("Register button clicked")
 
 		fmt.Println("Waiting for email...")
-		verification := ReadMessage(context.Background(), time.Second*30, user.Email, func(mail *Mail) bool {
+		verification := ReadMessage(context.Background(), time.Second*120, user.Email, func(mail *Mail) bool {
 			return mail.Subject == "Verify your Reddit email address"
 		})
 
