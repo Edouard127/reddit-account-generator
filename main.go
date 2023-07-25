@@ -123,7 +123,7 @@ func readUsers() []User {
 
 	defer file.Close()
 
-	var users []User
+	var users []User = make([]User, 0)
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&users)
 	if err != nil {
