@@ -44,7 +44,7 @@ func main() {
 	fmt.Println("Starting...")
 
 	for {
-		url := launcher.New().Set("proxy-server", "socks5://127.0.0.1:9050").MustLaunch()
+		url := launcher.New().Set("proxy-server", "socks5://127.0.0.1:9050").Leakless(false).MustLaunch()
 		browser := rod.New().ControlURL(url).MustConnect()
 
 		browser.SlowMotion(time.Millisecond * 10)
