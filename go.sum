@@ -1,7 +1,11 @@
 github.com/2captcha/2captcha-go v1.1.2 h1:POK+7CKyZOqEoGlbicoaVGgkK/Vi5dd6b4XDJml70BY=
 github.com/2captcha/2captcha-go v1.1.2/go.mod h1:hYOq+KVOq/0zAG6OTYW7Y313qDkHv58CcaOyjdBQSco=
+github.com/Edouard127/controller v0.0.0-20231223161822-26a63ef216d8 h1:deFjkmRq2JChrwfAjJwTaHGEQTNkmI5ex1PpjdYwNnk=
+github.com/Edouard127/controller v0.0.0-20231223161822-26a63ef216d8/go.mod h1:431WG8f/qc6paaY5su4hTVQXJt9+RfabPcaSILVXEAg=
 github.com/go-rod/rod v0.114.0 h1:P+zLOqsj+vKf4C86SfjP6ymyPl9VXoYKm+ceCeQms6Y=
 github.com/go-rod/rod v0.114.0/go.mod h1:aiedSEFg5DwG/fnNbUOTPMTTWX3MRj6vIs/a684Mthw=
+github.com/google/uuid v1.5.0 h1:1p67kYwdtXjb0gL0BPiP1Av9wiZPo5A8z2cWkTZ+eyU=
+github.com/google/uuid v1.5.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/ysmood/fetchup v0.2.3 h1:ulX+SonA0Vma5zUFXtv52Kzip/xe7aj4vqT5AJwQ+ZQ=

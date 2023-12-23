@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -49,7 +50,7 @@ var Domains = []string{
 }
 
 func GetEmail() string {
-	return generateId(18) + "@" + Domains[rand.Intn(len(Domains))]
+	return uuid.New().String() + "@" + Domains[rand.Intn(len(Domains))]
 }
 
 func GetMessages(email string) []*Mail {
@@ -87,7 +88,6 @@ func ReadMessage(ctx context.Context, t time.Duration, email string, fn func(*Ma
 		default:
 			mails := GetMessages(email)
 			for _, mail := range mails {
-				fmt.Println(mail.Subject)
 				if fn(mail) {
 					req, _ := http.NewRequest("GET", fmt.Sprintf(READ_EMAIL, strings.Split(email, "@")[0], strings.Split(email, "@")[1], mail.Id), nil)
 					resp, _ := http.DefaultClient.Do(req)

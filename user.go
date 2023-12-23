@@ -1,6 +1,6 @@
 package main
 
-import "math/rand"
+import "github.com/google/uuid"
 
 type User struct {
 	Email    string `json:"email"`
@@ -8,10 +8,14 @@ type User struct {
 	Password string `json:"password"`
 }
 
-func NewRandomUser() User {
+func NewUser() User {
 	return User{
 		Email:    GetEmail(),
-		Username: fillWithNumbers(generateId(rand.Intn(6) + 8)),
-		Password: fillWithNumbers(generateId(rand.Intn(34))),
+		Username: uuid.New().String(),
+		Password: uuid.New().String(),
 	}
+}
+
+func (u User) MarshalJSON() ([]byte, error) {
+	return []byte(`{"email":"` + u.Email + `","username":"` + u.Username + `","password":"` + u.Password + `"}`), nil
 }
